@@ -23,11 +23,11 @@ def findTopoSort(
 
     # Exploring dependencies
     explorationDict[sectionID] = "Exploring"
-    for depends_id in sectionsDict[sectionID]:
+    for depends_id in sectionsDict[sectionID].dependsOn:
         findTopoSort(depends_id, explorationDict, sectionsDict, stack)
 
     explorationDict[sectionID] = "Explored"
-    stack.append(sectionID)  # Add section ID to final stack
+    stack.append(sectionsDict[sectionID])  # Add section ID to final stack
 
 
 def resolve_dependency_order(sections: List[Section]) -> List[Section]:
@@ -36,7 +36,7 @@ def resolve_dependency_order(sections: List[Section]) -> List[Section]:
     sortedByOrder = sorted(sections, key=lambda s: s.order)
 
     # Creating a dict of sectionID wrt their dependencies
-    sectionsDict = {section.id: section.dependsOn for section in sections}
+    sectionsDict = {section.id: section for section in sections}
 
     # Dict to keep track of exploration status
     explorationDict = {section.id: "Not Explored yet" for section in sections}
@@ -59,4 +59,4 @@ if __name__ == "__main__":
         Section("intro", 2, []),
     ]
     result = resolve_dependency_order(sections)
-    print(result)
+    print([s.id for s in result])

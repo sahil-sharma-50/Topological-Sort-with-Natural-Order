@@ -27,12 +27,12 @@ def resolve_dependency_order(sections: List[Section]) -> List[Section]:
 
             # Before adding section, lets do quick dependency check
             for depends_id in section.dependsOn:
-                if depends_id not in stack:
+                if depends_id not in [s.id for s in stack]:
                     addSection = False  # Skip Section if dependency missing
                     break
 
             if addSection:
-                stack.append(section.id)  # Add section to final stack
+                stack.append(section)  # Add section to final stack
                 sortedByOrder.remove(section)  # Remove processed section
                 circulation_detected = False
                 break
@@ -45,9 +45,10 @@ def resolve_dependency_order(sections: List[Section]) -> List[Section]:
 
 if __name__ == "__main__":
     sections = [
-        Section("summary", 0, ["details"]),
-        Section("details", 1, []),
-        Section("intro", 2, []),
+        Section("base", 0, []),
+        Section("left", 1, ["base"]),
+        Section("right", 2, ["base"]),
+        Section("top", 3, ["left", "right"]),
     ]
     result = resolve_dependency_order(sections)
-    print(result)
+    print([s.id for s in result])
